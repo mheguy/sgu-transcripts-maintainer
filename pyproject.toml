@@ -1,0 +1,143 @@
+[project]
+name = "sgu-transcripts-maintainer"
+version = "0.0.1"
+description = ""
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "python-dotenv>=1.0.1",
+    "jinja2>=3.1.4",
+    "loguru>=0.7.2",
+    "pywikibot>=9.5.0",
+    "sentry-sdk>=2.17.0",
+]
+
+[dependency-groups]
+dev = [
+    "coverage",
+    "pyright",
+    "pytest",
+    "pytest-icdiff",
+    "pytest-cov",
+    "pytest-randomly",
+    "ruff",
+]
+
+[tool.black]
+line-length = 120
+
+[tool.coverage]
+run.branch = true
+run.relative_files = true
+run.source = ["sgu_transcripts_maintainer"]
+xml.output = "cov.xml"
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+omit = []
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "@(abc\\.)?abstractmethod",
+    "NotImplementedError",
+    "def __repr__",
+    "if __name__ == .__main__.:",
+]
+
+[tool.pyright]
+reportMissingImports = true
+reportMissingTypeStubs = false
+exclude = ["**/.*", "**/node_modules", "**/__pycache__"]
+
+[tool.pytest]
+ignore-glob = [".venv"]
+
+[tool.pytest.ini_options]
+addopts = ["--strict-markers"]
+markers = []
+filterwarnings = []
+log_cli = true
+log_cli_level = "INFO"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+
+[tool.ruff.format]
+docstring-code-format = true
+line-ending = "lf"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "ANN101",  # missing-type-self - static analyzers infer the type of self
+    "ANN102",  # missing-type-cls - static analyzers infer the type of cls
+    "ANN401",  # any-type - this is acceptable in some cases
+    "D105",    # undocumented-magic-method - documenting magic methods is redundant
+    "D107",    # undocumented-public-init - documenting init methods is redundant
+    "DTZ",     # flake8-datetimez - we don't always want timezone-aware datetimes
+    "EM",      # flake8-errmsg - tough to enforce
+    "ERA",     # commented-out-code - sometimes commented out code is useful
+    "FIX002",  # errors for todos
+    "PLR0913", # too many arguments to function (including tests) - should not be a blocker
+    "PT004",   # missing-fixture-name-underscore - adding underscore to names means IDEs will show them as unused
+    "SIM108",  # Ternaries make code harder to read, especially for new developers
+    "TD",      # rules related to TODOs in code
+    "T20",     # makes using print and pprint an error
+    "TRY003",  # warns for long messages when raising exceptions rather than in the class
+
+    # These are ignored because we use Ruff to format code.
+    "COM812",
+    "E501",
+    "ISC001",
+
+    # Doc rules.
+    "D100", # public modules (I don't think this is necessary)
+]
+# Frustrating automatic fixes (ex. removing unused imports before you have a chance to use them)
+unfixable = ["B007", "E712", "F401", "F841"]
+exclude = [".venv"]
+
+[tool.ruff.lint.flake8-annotations]
+allow-star-arg-any = true
+ignore-fully-untyped = true
+mypy-init-return = true
+suppress-dummy-args = true
+suppress-none-returning = true
+
+[tool.ruff.lint.flake8-pytest-style]
+mark-parentheses = false
+fixture-parentheses = true
+parametrize-names-type = "csv"
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"
+inline-quotes = "double"
+multiline-quotes = "double"
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "parents"
+
+[tool.ruff.lint.flake8-type-checking]
+quote-annotations = true
+runtime-evaluated-base-classes = [
+    "pydantic.BaseModel",
+    "sqlalchemy.orm.DeclarativeBase",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["sgu_transcripts_maintainer"]
+
+[tool.ruff.lint.per-file-ignores]
+# Rules for notebooks:
+"*.ipynb" = ["PLE1142", "PLR2004", "S101", "S311"]
+# Rules for tests:
+"test_*.py" = ["ANN001", "ANN401", "D10", "PGH", "PLR2004", "S101", "SLF"]
+# Rules for init files:
+"__init__.py" = ["D10"]
+# Project-specific rules:
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
